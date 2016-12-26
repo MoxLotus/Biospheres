@@ -1,0 +1,36 @@
+package moxlotus.world;
+
+import java.util.List;
+import java.util.Random;
+
+import javax.annotation.Nullable;
+
+import moxlotus.world.biosphere.Biosphere;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeProvider;
+
+public class BiomeProviderMox extends BiomeProvider{
+	@Override
+    public Biome[] getBiomes(@Nullable Biome[] listToReuse, int x, int z, int width, int length, boolean cacheFlag){
+        if (listToReuse == null || listToReuse.length < width * length) listToReuse = new Biome[width * length];
+        if (cacheFlag && width == 16 && length == 16 && (x & 15) == 0 && (z & 15) == 0){
+        	return super.getBiomes(listToReuse, x, z, width, length, cacheFlag);
+        }else{
+			for (int i = 0; i < width; i++) for (int j = 0; j < length; j++)
+                listToReuse[i+j*width] = Biosphere.getBiosphere((x+i)/16, (z+j)/16).getBiome((x+i)%16, (z+j)%16);
+            return listToReuse;
+        }
+    }
+	@Override
+    public boolean areBiomesViable(int x, int z, int radius, List<Biome> allowed){
+		Biome biome = Biosphere.getBiosphere(x/16, z/16).getBiome(x, z);
+		for (Biome b : getBiomes(null, x, z, radius, radius)) if (allowed.contains(b)) return true;
+		return false;
+    }
+	@Override
+    @Nullable
+    public BlockPos findBiomePosition(int x, int z, int range, List<Biome> biomes, Random random){
+        return new BlockPos(0, 0, 0);
+    }
+}
