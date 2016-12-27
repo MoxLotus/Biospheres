@@ -17,5 +17,5 @@ public class Biospheres{
     public void preInit(FMLPreInitializationEvent event){
         DimensionManager.unregisterDimension(0);
         DimensionManager.registerDimension(0, DIM_TYPE);
-	}
+    }
 }

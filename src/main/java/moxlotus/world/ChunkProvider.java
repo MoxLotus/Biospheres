@@ -24,7 +24,7 @@ public class ChunkProvider implements IChunkGenerator{
     private final long seed;
     protected Random rand;
 
-	public ChunkProvider(World world){
+    public ChunkProvider(World world){
         super();
         this.world = world;
         seed = world.getSeed();
@@ -32,7 +32,7 @@ public class ChunkProvider implements IChunkGenerator{
     }
 
     private void setSeed(int x, int z){
-        rand.setSeed(seed + x*7477l + z*8501l);
+        rand.setSeed(seed + x*4513l + z*3529l);
     }
     @Override
     public Chunk provideChunk(int x, int z){
@@ -49,9 +49,9 @@ public class ChunkProvider implements IChunkGenerator{
     }
     
     protected ChunkPrimer provideChunkPrimer(int x, int z, Biome[] biomesForGeneration){
-    	ChunkPrimer primer = new ChunkPrimer();
-    	Biosphere b = Biosphere.getBiosphere(x, z);
-    	b.getChunk(primer);
+        ChunkPrimer primer = new ChunkPrimer();
+        Biosphere b = Biosphere.getBiosphere(x, z);
+        b.getChunk(primer, x, z);
 
         for (int i = 0; i < 16; ++i) for (int j = 0; j < 16; ++j){
             Biome biome = biomesForGeneration[j + i*16];
@@ -60,8 +60,11 @@ public class ChunkProvider implements IChunkGenerator{
         return primer;
     }
     @Override
-    public void populate(int x, int z){
-        ;
+    public void populate(int X, int Z){
+        setSeed(X, Z);
+        BlockPos pos = new BlockPos(X*16, 0, Z*16);
+        Biome biome = Biosphere.getBiosphere(X, Z).getBiome();
+        biome.decorate(world, rand, pos);
     }
     @Override
     public boolean generateStructures(Chunk chunkIn, int x, int z){
