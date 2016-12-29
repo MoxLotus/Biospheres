@@ -35,11 +35,11 @@ public class ChunkProvider implements IChunkGenerator{
         rand.setSeed(seed + x*4513l + z*3529l);
     }
     @Override
-    public Chunk provideChunk(int x, int z){
-        this.setSeed(x, z);
-        Biome[] biomesForGeneration = this.world.getBiomeProvider().getBiomes(null, x, z, 16, 16);
-        ChunkPrimer primer = provideChunkPrimer(x, z, biomesForGeneration);
-        Chunk chunk = new Chunk(world, primer, x, z);
+    public Chunk provideChunk(int X, int Z){
+        this.setSeed(X, Z);
+        Biome[] biomesForGeneration = this.world.getBiomeProvider().getBiomes(null, X, Z, 16, 16);
+        ChunkPrimer primer = provideChunkPrimer(X, Z, biomesForGeneration);
+        Chunk chunk = new Chunk(world, primer, X, Z);
 
         byte[] abyte = chunk.getBiomeArray();
         for (int i = 0; i < abyte.length; ++i) abyte[i] = (byte)Biome.getIdForBiome(biomesForGeneration[i]);
@@ -48,14 +48,14 @@ public class ChunkProvider implements IChunkGenerator{
         return chunk;
     }
     
-    protected ChunkPrimer provideChunkPrimer(int x, int z, Biome[] biomesForGeneration){
+    protected ChunkPrimer provideChunkPrimer(int X, int Z, Biome[] biomesForGeneration){
         ChunkPrimer primer = new ChunkPrimer();
-        Biosphere b = Biosphere.getBiosphere(x, z);
-        b.getChunk(primer, x, z);
+        Biosphere b = Biosphere.getBiosphere(X, Z);
+        b.getChunk(primer, X, Z);
 
         for (int i = 0; i < 16; ++i) for (int j = 0; j < 16; ++j){
             Biome biome = biomesForGeneration[j + i*16];
-            biome.genTerrainBlocks(this.world, this.rand, primer, x * 16 + i, z * 16 + j, 0/*this.depthBuffer[j + i * 16]*/);
+            biome.genTerrainBlocks(this.world, this.rand, primer, X * 16 + i, Z * 16 + j, 0/*this.depthBuffer[j + i * 16]*/);
         }
         return primer;
     }
@@ -63,7 +63,9 @@ public class ChunkProvider implements IChunkGenerator{
     public void populate(int X, int Z){
         setSeed(X, Z);
         BlockPos pos = new BlockPos(X*16, 0, Z*16);
-        Biome biome = Biosphere.getBiosphere(X, Z).getBiome();
+        Biosphere b = Biosphere.getBiosphere(X, Z);
+        Biome biome = b.getBiome();
+        b.populate(X, Z);
         biome.decorate(world, rand, pos);
     }
     @Override
