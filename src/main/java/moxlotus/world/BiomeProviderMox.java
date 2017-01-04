@@ -12,13 +12,13 @@ import net.minecraft.world.biome.BiomeProvider;
 
 public class BiomeProviderMox extends BiomeProvider{
     @Override
-    public Biome[] getBiomes(@Nullable Biome[] listToReuse, int X, int Z, int width, int length, boolean cacheFlag){
+    public Biome[] getBiomes(@Nullable Biome[] listToReuse, int x, int z, int width, int length, boolean cacheFlag){
         if (listToReuse == null || listToReuse.length < width * length) listToReuse = new Biome[width * length];
-        if (cacheFlag && width == 16 && length == 16 && (X & 15) == 0 && (Z & 15) == 0){
-            return super.getBiomes(listToReuse, X, Z, width, length, cacheFlag);
+        if (cacheFlag && width == 16 && length == 16 && (x & 15) == 0 && (z & 15) == 0){
+            return super.getBiomes(listToReuse, x, z, width, length, cacheFlag);
         }else{
             for (int i = 0; i < width; i++) for (int j = 0; j < length; j++)
-                listToReuse[i+j*width] = Biosphere.getBiosphere(X, Z).getBiome();
+                listToReuse[i+j*width] = Biosphere.getBiosphere((x+i)/16, (z+j)/16).getBiome();
             return listToReuse;
         }
     }
